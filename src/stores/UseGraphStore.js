@@ -59,40 +59,6 @@ export const useGraphStore = defineStore('graph', () => {
     }
   }
 
-  function solve() {
-    if (!graphData.value) return
-    
-    const result = {}
-    const nodesByDegree = [...nodes.value].sort((a, b) => {
-      const degreeA = edges.value.filter(e => e.n1 === a.id || e.n2 === a.id).length
-      const degreeB = edges.value.filter(e => e.n1 === b.id || e.n2 === b.id).length
-      return degreeB - degreeA
-    })
-    
-    nodesByDegree.forEach(node => {
-      const usedColors = new Set()
-      
-      edges.value.forEach(edge => {
-        if (edge.n1 === node.id && result[edge.n2]) {
-          usedColors.add(result[edge.n2])
-        }
-        if (edge.n2 === node.id && result[edge.n1]) {
-          usedColors.add(result[edge.n1])
-        }
-      })
-      
-      let color = 1
-      while (usedColors.has(color)) {
-        color++
-      }
-      
-      result[node.id] = color
-    })
-    
-    colorAssignments.value = result
-    validate()
-  }
-
   function validate() {
     if (!graphData.value) return
     
@@ -140,7 +106,6 @@ export const useGraphStore = defineStore('graph', () => {
     edges,
     totalColors,
     loadInstance,
-    solve,
     validate,
     updateColor,
     downloadSolution

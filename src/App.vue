@@ -31,49 +31,33 @@ function closeColorPicker() {
 
 <template>
   <div class="app">
-    <h1>Coloreado de Burbujas</h1>
-    
+    <h1>BUBBLE TROUBLE</h1>
+
     <div class="controls">
-      <select 
-        v-model="store.selectedInstance" 
-        @change="store.loadInstance(store.selectedInstance)"
-      >
+      <select v-model="store.selectedInstance" @change="store.loadInstance(store.selectedInstance)">
         <option value="">Seleccionar instancia</option>
         <option v-for="instance in instances" :key="instance" :value="instance">
           {{ instance }}
         </option>
       </select>
-      
-      <button @click="store.solve">Resolver</button>
+
       <button @click="store.validate">Validar solución</button>
       <button @click="store.downloadSolution">Descargar solución</button>
-      
+
       <div v-if="store.totalColors > 0" class="stats">
         Colores usados: {{ store.totalColors }}
       </div>
     </div>
-    
+
     <div v-if="store.validationError" class="error">
       {{ store.validationError }}
     </div>
-    
-    <GraphVisualization
-      v-if="store.graphData"
-      :nodes="store.nodes"
-      :edges="store.edges"
-      :color-assignments="store.colorAssignments"
-      :color-map="colorMap"
-      @node-clicked="handleNodeClick"
-    />
-    
-    <ColorPicker
-      v-if="store.showColorPicker && store.selectedNode !== null"
-      :current-node="store.selectedNode"
-      :current-color="store.colorAssignments[store.selectedNode]"
-      :max-colors="store.totalColors"
-      :color-map="colorMap"
-      @color-selected="(color) => store.updateColor(store.selectedNode, color)"
-      @close="closeColorPicker"
-    />
+
+    <GraphVisualization v-if="store.graphData" :nodes="store.nodes" :edges="store.edges"
+      :color-assignments="store.colorAssignments" :color-map="colorMap" @node-clicked="handleNodeClick" />
+
+    <ColorPicker v-if="store.showColorPicker && store.selectedNode !== null" :current-node="store.selectedNode"
+      :current-color="store.colorAssignments[store.selectedNode]" :max-colors="store.totalColors" :color-map="colorMap"
+      @color-selected="(color) => store.updateColor(store.selectedNode, color)" @close="closeColorPicker" />
   </div>
 </template>
