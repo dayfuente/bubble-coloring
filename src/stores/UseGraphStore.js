@@ -14,7 +14,8 @@ export const useGraphStore = defineStore('graph', () => {
   const nodes = computed(() => {
     if (!graphData.value) return []
     const nodeSet = new Set()
-    graphData.value.links.forEach(link => {
+    const pairs = graphData.value.pairs || []
+    pairs.forEach(link => {
       nodeSet.add(link.n1)
       nodeSet.add(link.n2)
     })
@@ -31,19 +32,30 @@ export const useGraphStore = defineStore('graph', () => {
   async function loadInstance(instanceName) {
     try {
       const [input, output] = await Promise.all([
-        fetch(`/instances/${instanceName}/input.json`).then(r => r.json()),
-        fetch(`/instances/${instanceName}/output.json`).then(r => r.json())
+        fetch(`/instances/${instanceName}/input.json`).then(r => {
+          if (!r.ok) throw new Error(`Error ${r.status} al cargar input.json`)
+          return r.json()
+        }),
+        fetch(`/instances/${instanceName}/output.json`).then(r => {
+          if (!r.ok) throw new Error(`Error ${r.status} al cargar output.json`)
+          return r.json()
+        })
       ])
       
+      if (!output?.assignment) {
+        throw new Error("El archivo output.json no tiene la estructura esperada")
+      }
+
       graphData.value = input
-      colorAssignments.value = output.reduce((acc, curr) => {
-        acc[curr.nodo] = curr.color
+      colorAssignments.value = output.assignment.reduce((acc, curr) => {
+        acc[curr.node] = curr.color
         return acc
       }, {})
+      
       validationError.value = ''
     } catch (error) {
       console.error("Error loading instance:", error)
-      validationError.value = "Error al cargar la instancia"
+      validationError.value = `Error al cargar la instancia: ${error.message}`
     }
   }
 
@@ -101,10 +113,12 @@ export const useGraphStore = defineStore('graph', () => {
   function downloadSolution() {
     if (!graphData.value) return
     
-    const output = Object.entries(colorAssignments.value).map(([nodo, color]) => ({
-      nodo: parseInt(nodo),
-      color
-    }))
+    const output = {
+      assignment: Object.entries(colorAssignments.value).map(([node, color]) => ({
+        node: parseInt(node),
+        color
+      }))
+    }
     
     const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)

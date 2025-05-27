@@ -1,7 +1,7 @@
 <script setup>
 import { useGraphStore } from '@/stores/UseGraphStore'
 import GraphVisualization from '@/components/GraphVisualization.vue'
-import ColorPicker from '@/components/Colorpicker'
+import ColorPicker from '@/components/ColorPicker'
 
 const store = useGraphStore()
 
