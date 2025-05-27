@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { Network, DataSet } from 'vis-network'
+// import { Network, DataSet } from 'vis-network'
+import { DataSet, Network } from 'vis-network/standalone/esm/vis-network'
+
 import 'vis-network/styles/vis-network.css'
 
 const props = defineProps({
