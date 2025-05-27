@@ -112,5 +112,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="graphContainer" class="graph-container" style="width: 100%; height: 100%;"></div>
+  <div ref="graphContainer" class="graph-container" style="width: 100%; height: 80vh;"></div>
 </template>
