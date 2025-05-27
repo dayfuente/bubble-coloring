@@ -40,6 +40,7 @@ function selectColor(colorId) {
     </div>
   </div>
 </template>
+
 <style scoped>
 .color-picker-modal {
   position: fixed;
@@ -58,4 +59,11 @@ function selectColor(colorId) {
   gap: 10px;
 }
 
+.color-option {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #999;
+}
 </style>
