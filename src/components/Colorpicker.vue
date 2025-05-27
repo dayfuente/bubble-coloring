@@ -40,3 +40,22 @@ function selectColor(colorId) {
     </div>
   </div>
 </template>
+<style scoped>
+.color-picker-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid black;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.color-picker-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+</style>
