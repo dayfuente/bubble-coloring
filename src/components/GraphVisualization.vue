@@ -1,3 +1,7 @@
+<template>
+  <div ref="graphContainer" class="graph-container" style="width: 100%; height: 80vh;"></div>
+</template>
+
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 // import { Network, DataSet } from 'vis-network'
@@ -111,6 +115,3 @@ onMounted(() => {
 })
 </script>
 
-<template>
-  <div ref="graphContainer" class="graph-container" style="width: 100%; height: 80vh;"></div>
-</template>

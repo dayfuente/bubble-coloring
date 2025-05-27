@@ -1,7 +1,61 @@
+<template>
+  <div class="app">
+    <h1>BUBBLE TROUBLE</h1>
+
+    <div class="controls">
+      <!-- SELECT con Element Plus funcionando -->
+      <el-select
+        v-model="store.selectedInstance"
+        placeholder="Seleccionar instancia"
+        @change="handleChange"
+        clearable
+        style="width: 300px"
+      >
+        <el-option
+          v-for="instance in instances"
+          :key="instance"
+          :label="instance"
+          :value="instance"
+        />
+      </el-select>
+
+      <el-button @click="store.validate" style="width: 300px">Validar solución</el-button>
+      <el-button @click="store.downloadSolution" style="width: 300px; margin-left: 0">Descargar solución</el-button>
+
+      <div v-if="store.totalColors > 0" class="stats">
+        Colores usados: {{ store.totalColors }}
+      </div>
+    </div>
+
+    <div v-if="store.validationError" class="error">
+      {{ store.validationError }}
+    </div>
+
+    <GraphVisualization
+      v-if="store.graphData"
+      :nodes="store.nodes"
+      :edges="store.edges"
+      :color-assignments="store.colorAssignments"
+      :color-map="colorMap"
+      @node-clicked="handleNodeClick"
+    />
+
+    <ColorPicker
+      v-if="store.showColorPicker && store.selectedNode !== null"
+      :current-node="store.selectedNode"
+      :current-color="store.colorAssignments[store.selectedNode]"
+      :max-colors="store.totalColors"
+      :color-map="colorMap"
+      @color-selected="(color) => store.updateColor(store.selectedNode, color)"
+      @close="closeColorPicker"
+    />
+  </div>
+</template>
+
 <script setup>
 import { useGraphStore } from '@/stores/UseGraphStore'
 import GraphVisualization from '@/components/GraphVisualization.vue'
-import ColorPicker from '@/components/ColorPicker'
+import ColorPicker from '@/components/ColorPicker.vue'
 
 const store = useGraphStore()
 
@@ -18,46 +72,44 @@ const colorMap = {
   8: '#FF006E',
 }
 
+// Este método se dispara cuando se selecciona una instancia del select
+function handleChange(value) {
+  store.loadInstance(value)
+}
+
+// Abrir el color picker
 function handleNodeClick(nodeId) {
   store.selectedNode = nodeId
   store.showColorPicker = true
 }
 
+// Cerrar el color picker
 function closeColorPicker() {
   store.showColorPicker = false
   store.selectedNode = null
 }
 </script>
 
-<template>
-  <div class="app">
-    <h1>BUBBLE TROUBLE</h1>
+<style scoped>
+.app {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-    <div class="controls">
-      <select v-model="store.selectedInstance" @change="store.loadInstance(store.selectedInstance)">
-        <option value="">Seleccionar instancia</option>
-        <option v-for="instance in instances" :key="instance" :value="instance">
-          {{ instance }}
-        </option>
-      </select>
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
 
-      <button @click="store.validate">Validar solución</button>
-      <button @click="store.downloadSolution">Descargar solución</button>
+.stats {
+  margin-top: 10px;
+  font-weight: bold;
+}
 
-      <div v-if="store.totalColors > 0" class="stats">
-        Colores usados: {{ store.totalColors }}
-      </div>
-    </div>
-
-    <div v-if="store.validationError" class="error">
-      {{ store.validationError }}
-    </div>
-
-    <GraphVisualization v-if="store.graphData" :nodes="store.nodes" :edges="store.edges"
-      :color-assignments="store.colorAssignments" :color-map="colorMap" @node-clicked="handleNodeClick" />
-
-    <ColorPicker v-if="store.showColorPicker && store.selectedNode !== null" :current-node="store.selectedNode"
-      :current-color="store.colorAssignments[store.selectedNode]" :max-colors="store.totalColors" :color-map="colorMap"
-      @color-selected="(color) => store.updateColor(store.selectedNode, color)" @close="closeColorPicker" />
-  </div>
-</template>
+.error {
+  color: red;
+  margin-bottom: 20px;
+}
+</style>

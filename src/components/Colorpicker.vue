@@ -1,3 +1,22 @@
+<template>
+  <div class="color-picker-modal">
+    <div class="color-picker-content">
+      <h3>Seleccionar color para nodo {{ currentNode }}</h3>
+      <div class="color-options">
+        <div
+          v-for="color in availableColors"
+          :key="color.id"
+          class="color-option"
+          :style="{ backgroundColor: color.hex }"
+          :title="`Color ${color.id}`"
+          @click="selectColor(color.id)"
+        ></div>
+      </div>
+      <button @click="$emit('close')">Cerrar</button>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { computed } from 'vue'
 
@@ -21,25 +40,6 @@ function selectColor(colorId) {
   emit('close')
 }
 </script>
-
-<template>
-  <div class="color-picker-modal">
-    <div class="color-picker-content">
-      <h3>Seleccionar color para nodo {{ currentNode }}</h3>
-      <div class="color-options">
-        <div
-          v-for="color in availableColors"
-          :key="color.id"
-          class="color-option"
-          :style="{ backgroundColor: color.hex }"
-          :title="`Color ${color.id}`"
-          @click="selectColor(color.id)"
-        ></div>
-      </div>
-      <button @click="$emit('close')">Cerrar</button>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .color-picker-modal {
