@@ -59,7 +59,7 @@ const drawGraph = () => {
     const data = { nodes, edges }
     const options = {
       physics: {
-        enabled: true,
+        enabled: false,
         stabilization: {
           iterations: 100
         }
