@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import JSZip from 'jszip'
 
 export const useGraphStore = defineStore('graph', () => {
-  // Estado
   const graphData = ref(null)
   const colorAssignments = ref({})
   const selectedInstance = ref('')
@@ -13,7 +12,6 @@ export const useGraphStore = defineStore('graph', () => {
   const originalAssignments = ref([])
   const originalInput = ref(null)
 
-  // Computadas
   const nodes = computed(() => {
     if (!graphData.value) return []
     const nodeSet = new Set()
@@ -31,8 +29,7 @@ export const useGraphStore = defineStore('graph', () => {
     return new Set(Object.values(colorAssignments.value)).size
   })
 
-  // Métodos
-  async function loadInstance(instanceName) {
+  const loadInstance = async instanceName => {
     try {
       const [input, output] = await Promise.all([
         fetch(`/instances/${instanceName}/input.json`).then(r => {
@@ -64,11 +61,11 @@ export const useGraphStore = defineStore('graph', () => {
     }
   }
 
-  function updateColor(node, color) {
+  const updateColor = (node, color) => {
     colorAssignments.value = { ...colorAssignments.value, [node]: color }
   }
 
-  function downloadSolution() {
+  const downloadSolution = () => {
     if (!graphData.value || !originalAssignments.value.length) return
 
     const modifiedOutput = {
@@ -84,13 +81,8 @@ export const useGraphStore = defineStore('graph', () => {
 
     const zip = new JSZip()
 
-    // Agrega input.json
     zip.file('input.json', JSON.stringify(originalInput.value, null, 2))
-
-    // Agrega output.json original
     zip.file('original_output.json', JSON.stringify(originalOutput, null, 2))
-
-    // Agrega output.json modificado
     zip.file('modified_output.json', JSON.stringify(modifiedOutput, null, 2))
 
     zip.generateAsync({ type: 'blob' }).then(blob => {

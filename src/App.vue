@@ -8,12 +8,27 @@
     <el-row>
       <el-col :span="6" class="center-buttons">
         <div class="controls">
-          <el-select v-model="store.selectedInstance" placeholder="Seleccionar instancia" @change="handleChange"
-            clearable style="width: 300px">
-            <el-option v-for="instance in instances" :key="instance" :label="instance" :value="instance" />
+          <el-select
+            v-model="store.selectedInstance"
+            placeholder="Seleccionar instancia"
+            @change="handleChange"
+            clearable
+            style="width: 300px"
+          >
+            <el-option
+              v-for="instance in instances"
+              :key="instance"
+              :label="instance"
+              :value="instance"
+            />
           </el-select>
 
-          <el-button @click="store.downloadSolution" style="width: 300px; margin-left: 0">Descargar solución</el-button>
+          <el-button
+            @click="store.downloadSolution"
+            style="width: 300px; margin-left: 0"
+          >
+            Descargar solución
+          </el-button>
 
           <div v-if="store.totalColors > 0" class="stats">
             Colores usados: {{ store.totalColors }}
@@ -21,22 +36,30 @@
         </div>
       </el-col>
       <el-col :span="18">
-
         <div v-if="store.validationError" class="error">
           {{ store.validationError }}
         </div>
 
-        <GraphVisualization v-if="store.graphData" :nodes="store.nodes" :edges="store.edges"
-          :color-assignments="store.colorAssignments" :color-map="colorMap" @node-clicked="handleNodeClick" />
+        <GraphVisualization
+          v-if="store.graphData"
+          :nodes="store.nodes"
+          :edges="store.edges"
+          :color-assignments="store.colorAssignments"
+          :color-map="colorMap"
+          @node-clicked="handleNodeClick"
+        />
 
-        <ColorPicker v-if="store.showColorPicker && store.selectedNode !== null" :current-node="store.selectedNode"
-          :current-color="store.colorAssignments[store.selectedNode]" :max-colors="store.totalColors"
-          :color-map="colorMap" @color-selected="(color) => store.updateColor(store.selectedNode, color)"
-          @close="closeColorPicker" />
+        <ColorPicker
+          v-if="store.showColorPicker && store.selectedNode !== null"
+          :current-node="store.selectedNode"
+          :current-color="store.colorAssignments[store.selectedNode]"
+          :max-colors="store.totalColors"
+          :color-map="colorMap"
+          @color-selected="(color) => store.updateColor(store.selectedNode, color)"
+          @close="closeColorPicker"
+        />
       </el-col>
     </el-row>
-
-
   </div>
 </template>
 
@@ -60,19 +83,16 @@ const colorMap = {
   8: '#FF006E',
 }
 
-// Este método se dispara cuando se selecciona una instancia del select
-function handleChange(value) {
+const handleChange = value => {
   store.loadInstance(value)
 }
 
-// Abrir el color picker
-function handleNodeClick(nodeId) {
+const handleNodeClick = nodeId => {
   store.selectedNode = nodeId
   store.showColorPicker = true
 }
 
-// Cerrar el color picker
-function closeColorPicker() {
+const closeColorPicker = () => {
   store.showColorPicker = false
   store.selectedNode = null
 }
@@ -108,6 +128,6 @@ function closeColorPicker() {
 
 .title-center {
   text-align: center;
-  padding-bottom:20px ;
+  padding-bottom: 20px;
 }
 </style>

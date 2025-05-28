@@ -29,13 +29,13 @@ const props = defineProps({
 
 const emit = defineEmits(['color-selected', 'close'])
 
-const availableColors = computed(() => {
-  return Object.entries(props.colorMap)
+const availableColors = computed(() =>
+  Object.entries(props.colorMap)
     .slice(0, Math.max(props.maxColors + 2, 8))
     .map(([id, hex]) => ({ id: parseInt(id), hex }))
-})
+)
 
-function selectColor(colorId) {
+const selectColor = colorId => {
   emit('color-selected', colorId)
   emit('close')
 }

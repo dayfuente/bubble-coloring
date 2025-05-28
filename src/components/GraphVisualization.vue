@@ -4,9 +4,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-// import { Network, DataSet } from 'vis-network'
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network'
-
 import 'vis-network/styles/vis-network.css'
 
 const props = defineProps({
@@ -21,9 +19,9 @@ const emit = defineEmits(['node-clicked'])
 const graphContainer = ref(null)
 const network = ref(null)
 
-function drawGraph() {
+const drawGraph = () => {
   if (!graphContainer.value || !props.nodes || !props.edges) return
-  
+
   try {
     const nodes = new DataSet(
       props.nodes.map(node => ({
@@ -41,33 +39,23 @@ function drawGraph() {
         shape: 'circle'
       }))
     )
-    
-    // const edges = new DataSet(
-    //   props.edges.map(edge => ({
-    //     from: edge.n1,
-    //     to: edge.n2,
-    //     color: getEdgeColor(edge),
-    //     width: 2,
-    //     smooth: false
-    //   }))
-    // )
+
     const edges = new DataSet(
-  props.edges.map(edge => ({
-    from: edge.n1 || edge.from,  // Acepta ambos formatos
-    to: edge.n2 || edge.to,      // Acepta ambos formatos
-    color: getEdgeColor(edge),
-    width: 2,
-    smooth: false,
-    // Añade esto para mejor visibilidad:
-    arrows: { to: false, },
-   
-    chosen: {
-      edge: function(values) {
-        values.width = 5;  // Grosor al seleccionar
-      }
-    }
-  }))
-)
+      props.edges.map(edge => ({
+        from: edge.n1 || edge.from,
+        to: edge.n2 || edge.to,
+        color: getEdgeColor(edge),
+        width: 2,
+        smooth: false,
+        arrows: { to: false },
+        chosen: {
+          edge: values => {
+            values.width = 5
+          }
+        }
+      }))
+    )
+
     const data = { nodes, edges }
     const options = {
       physics: {
@@ -76,7 +64,6 @@ function drawGraph() {
           iterations: 100
         }
       },
-    
       nodes: {
         size: 20,
         font: {
@@ -98,11 +85,11 @@ function drawGraph() {
         tooltipDelay: 200
       }
     }
-    
+
     if (network.value) {
       network.value.destroy()
     }
-    
+
     network.value = new Network(graphContainer.value, data, options)
     network.value.on('click', params => {
       if (params.nodes.length) {
@@ -114,10 +101,10 @@ function drawGraph() {
   }
 }
 
-function getEdgeColor(edge) {
+const getEdgeColor = edge => {
   const color1 = props.colorAssignments?.[edge.n1]
   const color2 = props.colorAssignments?.[edge.n2]
-  
+
   if (color1 && color2 && color1 === color2) {
     return { color: '#FF0000', highlight: '#FF0000' }
   }
@@ -125,17 +112,17 @@ function getEdgeColor(edge) {
 }
 
 onMounted(() => {
-  watch(() => [props.nodes, props.edges, props.colorAssignments], 
+  watch(
+    () => [props.nodes, props.edges, props.colorAssignments],
     () => drawGraph(),
     { immediate: true }
   )
-  console.log('Nodes:', props.nodes)
-console.log('Edges:', props.edges)
 })
 </script>
+
 <style scoped>
 .graph-container {
-  background-color: #f5f5f5;  
-  border: 1px solid #ddd;   
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
 }
 </style>
