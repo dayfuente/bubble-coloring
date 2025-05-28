@@ -1,10 +1,13 @@
 <template>
   <div class="app">
-    <h1>BUBBLE TROUBLE</h1>
     <el-row>
-      <el-col :span="6">
+      <el-col :span="24" class="title-center">
+        <h1>BUBBLE TROUBLE</h1>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="6" class="center-buttons">
         <div class="controls">
-          <!-- SELECT con Element Plus funcionando -->
           <el-select v-model="store.selectedInstance" placeholder="Seleccionar instancia" @change="handleChange"
             clearable style="width: 300px">
             <el-option v-for="instance in instances" :key="instance" :label="instance" :value="instance" />
@@ -77,7 +80,7 @@ function closeColorPicker() {
 
 <style scoped>
 .app {
-  padding: 20px;
+  padding: 5px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -96,5 +99,15 @@ function closeColorPicker() {
 .error {
   color: red;
   margin-bottom: 20px;
+}
+
+.center-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.title-center {
+  text-align: center;
+  padding-bottom:20px ;
 }
 </style>

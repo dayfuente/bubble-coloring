@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import JSZip from 'jszip'
 
 export const useGraphStore = defineStore('graph', () => {
   // Estado
@@ -9,6 +10,8 @@ export const useGraphStore = defineStore('graph', () => {
   const selectedNode = ref(null)
   const showColorPicker = ref(false)
   const validationError = ref('')
+  const originalAssignments = ref([])
+  const originalInput = ref(null)
 
   // Computadas
   const nodes = computed(() => {
@@ -41,17 +44,19 @@ export const useGraphStore = defineStore('graph', () => {
           return r.json()
         })
       ])
-      
+
       if (!output?.assignment) {
         throw new Error("El archivo output.json no tiene la estructura esperada")
       }
 
       graphData.value = input
+      originalInput.value = input
+      originalAssignments.value = output.assignment
       colorAssignments.value = output.assignment.reduce((acc, curr) => {
         acc[curr.node] = curr.color
         return acc
       }, {})
-      
+
       validationError.value = ''
     } catch (error) {
       console.error("Error loading instance:", error)
@@ -64,22 +69,38 @@ export const useGraphStore = defineStore('graph', () => {
   }
 
   function downloadSolution() {
-    if (!graphData.value) return
-    
-    const output = {
+    if (!graphData.value || !originalAssignments.value.length) return
+
+    const modifiedOutput = {
       assignment: Object.entries(colorAssignments.value).map(([node, color]) => ({
         node: parseInt(node),
         color
       }))
     }
-    
-    const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${selectedInstance.value}_solution.json`
-    a.click()
-    URL.revokeObjectURL(url)
+
+    const originalOutput = {
+      assignment: originalAssignments.value
+    }
+
+    const zip = new JSZip()
+
+    // Agrega input.json
+    zip.file('input.json', JSON.stringify(originalInput.value, null, 2))
+
+    // Agrega output.json original
+    zip.file('original_output.json', JSON.stringify(originalOutput, null, 2))
+
+    // Agrega output.json modificado
+    zip.file('modified_output.json', JSON.stringify(modifiedOutput, null, 2))
+
+    zip.generateAsync({ type: 'blob' }).then(blob => {
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${selectedInstance.value}_archivos.zip`
+      a.click()
+      URL.revokeObjectURL(url)
+    })
   }
 
   return {

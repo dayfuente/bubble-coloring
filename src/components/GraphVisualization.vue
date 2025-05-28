@@ -71,11 +71,12 @@ function drawGraph() {
     const data = { nodes, edges }
     const options = {
       physics: {
-        enabled: false,
+        enabled: true,
         stabilization: {
           iterations: 100
         }
       },
+    
       nodes: {
         size: 20,
         font: {
