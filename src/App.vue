@@ -3,30 +3,20 @@
     <el-row>
       <el-col :span="24" class="title-center">
         <h1>BUBBLE TROUBLE</h1>
+        <p v-if="hasConflicts" style="color: red; font-weight: bold;">
+          ⚠ Hay conflictos: dos nodos conectados no pueden tener el mismo color, las líneas rojas indican donde se encuentra el problema.
+        </p>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="6" class="center-buttons">
         <div class="controls">
-          <el-select
-            v-model="store.selectedInstance"
-            placeholder="Seleccionar instancia"
-            @change="handleChange"
-            clearable
-            style="width: 300px"
-          >
-            <el-option
-              v-for="instance in instances"
-              :key="instance"
-              :label="instance"
-              :value="instance"
-            />
+          <el-select v-model="store.selectedInstance" placeholder="Seleccionar instancia" @change="handleChange"
+            clearable style="width: 300px">
+            <el-option v-for="instance in instances" :key="instance" :label="instance" :value="instance" />
           </el-select>
 
-          <el-button
-            @click="store.downloadSolution"
-            style="width: 300px; margin-left: 0"
-          >
+          <el-button @click="store.downloadSolution" style="width: 300px; margin-left: 0">
             Descargar solución
           </el-button>
 
@@ -40,24 +30,13 @@
           {{ store.validationError }}
         </div>
 
-        <GraphVisualization
-          v-if="store.graphData"
-          :nodes="store.nodes"
-          :edges="store.edges"
-          :color-assignments="store.colorAssignments"
-          :color-map="colorMap"
-          @node-clicked="handleNodeClick"
-        />
+        <GraphVisualization v-if="store.graphData" :nodes="store.nodes" :edges="store.edges"
+          :color-assignments="store.colorAssignments" :color-map="colorMap" @node-clicked="handleNodeClick" />
 
-        <ColorPicker
-          v-if="store.showColorPicker && store.selectedNode !== null"
-          :current-node="store.selectedNode"
-          :current-color="store.colorAssignments[store.selectedNode]"
-          :max-colors="store.totalColors"
-          :color-map="colorMap"
-          @color-selected="(color) => store.updateColor(store.selectedNode, color)"
-          @close="closeColorPicker"
-        />
+        <ColorPicker v-if="store.showColorPicker && store.selectedNode !== null" :current-node="store.selectedNode"
+          :current-color="store.colorAssignments[store.selectedNode]" :max-colors="store.totalColors"
+          :color-map="colorMap" @color-selected="(color) => store.updateColor(store.selectedNode, color)"
+          @close="closeColorPicker" />
       </el-col>
     </el-row>
   </div>
@@ -67,9 +46,11 @@
 import { useGraphStore } from '@/stores/UseGraphStore'
 import GraphVisualization from '@/components/GraphVisualization.vue'
 import ColorPicker from '@/components/ColorPicker.vue'
+import { computed } from 'vue'
 
+const hasConflicts = computed(() => graph.conflictingEdges.length > 0)
 const store = useGraphStore()
-
+const graph = useGraphStore()
 const instances = ['instance1', 'instance2', 'instance3']
 
 const colorMap = {

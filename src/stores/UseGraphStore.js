@@ -95,6 +95,16 @@ export const useGraphStore = defineStore('graph', () => {
     })
   }
 
+  const conflictingEdges = computed(() => {
+    if (!graphData.value) return []
+    return edges.value.filter(edge => {
+      const color1 = colorAssignments.value[edge.n1]
+      const color2 = colorAssignments.value[edge.n2]
+      return color1 !== undefined && color1 === color2
+    })
+  })
+  
+
   return {
     graphData,
     colorAssignments,
@@ -107,6 +117,7 @@ export const useGraphStore = defineStore('graph', () => {
     totalColors,
     loadInstance,
     updateColor,
-    downloadSolution
+    downloadSolution,
+    conflictingEdges
   }
 })
