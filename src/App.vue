@@ -1,54 +1,39 @@
 <template>
   <div class="app">
     <h1>BUBBLE TROUBLE</h1>
+    <el-row>
+      <el-col :span="6">
+        <div class="controls">
+          <!-- SELECT con Element Plus funcionando -->
+          <el-select v-model="store.selectedInstance" placeholder="Seleccionar instancia" @change="handleChange"
+            clearable style="width: 300px">
+            <el-option v-for="instance in instances" :key="instance" :label="instance" :value="instance" />
+          </el-select>
 
-    <div class="controls">
-      <!-- SELECT con Element Plus funcionando -->
-      <el-select
-        v-model="store.selectedInstance"
-        placeholder="Seleccionar instancia"
-        @change="handleChange"
-        clearable
-        style="width: 300px"
-      >
-        <el-option
-          v-for="instance in instances"
-          :key="instance"
-          :label="instance"
-          :value="instance"
-        />
-      </el-select>
+          <el-button @click="store.downloadSolution" style="width: 300px; margin-left: 0">Descargar solución</el-button>
 
-      <el-button @click="store.validate" style="width: 300px">Validar solución</el-button>
-      <el-button @click="store.downloadSolution" style="width: 300px; margin-left: 0">Descargar solución</el-button>
+          <div v-if="store.totalColors > 0" class="stats">
+            Colores usados: {{ store.totalColors }}
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="18">
 
-      <div v-if="store.totalColors > 0" class="stats">
-        Colores usados: {{ store.totalColors }}
-      </div>
-    </div>
+        <div v-if="store.validationError" class="error">
+          {{ store.validationError }}
+        </div>
 
-    <div v-if="store.validationError" class="error">
-      {{ store.validationError }}
-    </div>
+        <GraphVisualization v-if="store.graphData" :nodes="store.nodes" :edges="store.edges"
+          :color-assignments="store.colorAssignments" :color-map="colorMap" @node-clicked="handleNodeClick" />
 
-    <GraphVisualization
-      v-if="store.graphData"
-      :nodes="store.nodes"
-      :edges="store.edges"
-      :color-assignments="store.colorAssignments"
-      :color-map="colorMap"
-      @node-clicked="handleNodeClick"
-    />
+        <ColorPicker v-if="store.showColorPicker && store.selectedNode !== null" :current-node="store.selectedNode"
+          :current-color="store.colorAssignments[store.selectedNode]" :max-colors="store.totalColors"
+          :color-map="colorMap" @color-selected="(color) => store.updateColor(store.selectedNode, color)"
+          @close="closeColorPicker" />
+      </el-col>
+    </el-row>
 
-    <ColorPicker
-      v-if="store.showColorPicker && store.selectedNode !== null"
-      :current-node="store.selectedNode"
-      :current-color="store.colorAssignments[store.selectedNode]"
-      :max-colors="store.totalColors"
-      :color-map="colorMap"
-      @color-selected="(color) => store.updateColor(store.selectedNode, color)"
-      @close="closeColorPicker"
-    />
+
   </div>
 </template>
 

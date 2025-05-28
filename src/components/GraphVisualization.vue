@@ -42,20 +42,36 @@ function drawGraph() {
       }))
     )
     
+    // const edges = new DataSet(
+    //   props.edges.map(edge => ({
+    //     from: edge.n1,
+    //     to: edge.n2,
+    //     color: getEdgeColor(edge),
+    //     width: 2,
+    //     smooth: false
+    //   }))
+    // )
     const edges = new DataSet(
-      props.edges.map(edge => ({
-        from: edge.n1,
-        to: edge.n2,
-        color: getEdgeColor(edge),
-        width: 2,
-        smooth: false
-      }))
-    )
-    
+  props.edges.map(edge => ({
+    from: edge.n1 || edge.from,  // Acepta ambos formatos
+    to: edge.n2 || edge.to,      // Acepta ambos formatos
+    color: getEdgeColor(edge),
+    width: 2,
+    smooth: false,
+    // Añade esto para mejor visibilidad:
+    arrows: { to: false, },
+   
+    chosen: {
+      edge: function(values) {
+        values.width = 5;  // Grosor al seleccionar
+      }
+    }
+  }))
+)
     const data = { nodes, edges }
     const options = {
       physics: {
-        enabled: true,
+        enabled: false,
         stabilization: {
           iterations: 100
         }
@@ -112,6 +128,13 @@ onMounted(() => {
     () => drawGraph(),
     { immediate: true }
   )
+  console.log('Nodes:', props.nodes)
+console.log('Edges:', props.edges)
 })
 </script>
-
+<style scoped>
+.graph-container {
+  background-color: #f5f5f5;  
+  border: 1px solid #ddd;   
+}
+</style>

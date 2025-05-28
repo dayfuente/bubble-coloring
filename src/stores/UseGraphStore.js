@@ -22,7 +22,7 @@ export const useGraphStore = defineStore('graph', () => {
     return Array.from(nodeSet).map(id => ({ id }))
   })
 
-  const edges = computed(() => graphData.value?.links || [])
+  const edges = computed(() => graphData.value?.pairs || [])
 
   const totalColors = computed(() => {
     return new Set(Object.values(colorAssignments.value)).size
@@ -59,21 +59,8 @@ export const useGraphStore = defineStore('graph', () => {
     }
   }
 
-  function validate() {
-    if (!graphData.value) return
-    
-    const invalidLinks = edges.value.filter(edge => {
-      return colorAssignments.value[edge.n1] === colorAssignments.value[edge.n2]
-    })
-    
-    validationError.value = invalidLinks.length > 0
-      ? `Solución inválida: ${invalidLinks.length} enlaces conectan nodos con el mismo color`
-      : ''
-  }
-
   function updateColor(node, color) {
     colorAssignments.value = { ...colorAssignments.value, [node]: color }
-    validate()
   }
 
   function downloadSolution() {
@@ -106,7 +93,6 @@ export const useGraphStore = defineStore('graph', () => {
     edges,
     totalColors,
     loadInstance,
-    validate,
     updateColor,
     downloadSolution
   }
